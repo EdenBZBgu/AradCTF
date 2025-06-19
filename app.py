@@ -1,13 +1,20 @@
 from flask import Flask
 import requests
 import os
+import urllib3
+
+# Disable SSL warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
 
 @app.route("/proxy")
 def proxy():
-    r = requests.get("https://www.aradcohen.com/")
-    return r.text
+    try:
+        r = requests.get("https://www.aradcohen.com/", verify=False)
+        return r.text
+    except Exception as e:
+        return f"ERROR: {e}", 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
